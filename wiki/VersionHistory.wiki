@@ -1,0 +1,17 @@
+#summary Version History and Manual
+
+= Introduction =
+
+wcd EST clustering system
+
+
+= Details =
+
+==Version history==
+Version 0.4.5.3 has minor bug fixes regarding dealing with the suffix array clustering
+algorithms.
+
+
+==Manual--
+The [http://www.bioinf.wits.ac.za/~scott/wcd.pdf PDF] version of the manual or the
+[http://www.bioinf.wits.ac.za/~scott/wcd.html HTML] version.
