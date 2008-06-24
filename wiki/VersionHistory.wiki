@@ -5,13 +5,16 @@
 wcd EST clustering system
 
 
-= Details =
 
 ==Version history==
 Version 0.4.5.3 has minor bug fixes regarding dealing with the suffix array clustering
 algorithms.
 
 
-==Manual--
+==Manual==
 The [http://www.bioinf.wits.ac.za/~scott/wcd.pdf PDF] version of the manual or the
 [http://www.bioinf.wits.ac.za/~scott/wcd.html HTML] version.
+
+==Contact Details==
+
+Please write to [http://dept.ee.wits.ac.za/~scott Scott Hazelhurst] if you have any queries. 
