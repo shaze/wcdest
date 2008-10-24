@@ -7,6 +7,10 @@ wcd EST clustering system
 
 
 ==Version history==
+
+Version 0.4.5.4 had a minor bug fix in some of code for reading in sequences. Previous 
+versions of wcd assumed that in FASTA files that the > appeared only in column 1. It turns out that there are some FASTA files where there can be multiple angle brackets in the comment line. Also some minor cleaning up done.
+
 Version 0.4.5.3 has minor bug fixes regarding dealing with the suffix array clustering
 algorithms.
 
