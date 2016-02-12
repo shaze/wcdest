@@ -1,0 +1,49 @@
+#!/bin/bash
+B=`basename $1 .fa`
+ORIG=$1
+shift
+
+cat > /tmp/alpha <<EOF
+B
+H
+D
+R
+A
+C
+G
+T
+X
+S
+K
+Y
+V
+M
+W
+N
+b
+h
+d
+r
+a
+c
+g
+t
+x
+s
+k
+y
+v
+m
+w
+n
+EOF
+
+
+F=${B}_fwd.fa
+R=${B}_rev.fa
+A=${B}_all.fa
+
+
+
+echo "Calling wcd"
+wcd -F kabm $@ ${A} 

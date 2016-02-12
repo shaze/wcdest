@@ -1,0 +1,50 @@
+
+Readme for the wcd distribution
+
+
+wcd (pronounced "wicked") is a d2-clustering program 
+released under the GNU Public Licence.
+
+
+The distribution should consists of 
+
+  wcd.c -- the program
+  wcd.texi -- source of help file
+  README   -- this file
+  Makefile
+
+
+To create documenation
+   make pdf
+   make info
+   make html
+
+etc, depending on what sort of document you want.
+
+Use the info system to get information
+
+info -f wcd
+
+
+To compile say
+   ./configure
+   make
+
+Please note that under early versions of FreeBSD you may have to make a small change
+in wcd.h in line 8. This is commented.
+
+
+NB: This version of the distribution was written for gcc assuming that
+all the gcc libraries are in the standard (i.e. where RedHat puts
+them) places. This is a problem in some distributions. The main
+problem is that some C libraries don't support long options. If this
+is the case for your distribution of C (and you can find out by
+running
+  make wcd 
+and seeing if there are any complaints. If there , change the makefile
+so that it reads  
+
+      CFLAGS = -DNOLONGOPT -O2 
+
+
+

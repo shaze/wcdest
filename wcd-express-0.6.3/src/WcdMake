@@ -1,0 +1,91 @@
+
+CC = gcc-4
+INCLUDES = /usr/include
+LIBS     = /usr/lib
+EXTRAFLAGS = 
+
+CFLAGS = -O2
+
+
+AUXPROGS =  comp2ext.pl ext2comp.pl wcd.c combine.c
+
+
+common:	 common.h common.c wcd.h
+	 $(CC) $(CFLAGS) -c common.c
+
+
+ed:	 ed.h common.h wcd.h
+	 $(CC) $(CFLAGS) -c ed.c
+
+d2:	 common.h d2.h wcd.h
+	 $(CC) $(CFLAGS) -c d2.c
+
+suffixcluster:	 common.h suffixcluster.c
+	 $(CC) $(CFLAGS) -DWORDS_BIGENDIAN -c suffixcluster.c
+
+info:
+	makeinfo ../doc/wcd.texi -o ../doc/wcd.info
+
+
+wcd:	wcd.c common.o d2.o ed.o suffixcluster.o wcd.c
+	$(CC) ${CFLAGS} -o $@  wcd.c common.o d2.o ed.o suffixcluster.c
+
+wcd2:	wcd.c
+	$(CC) -I/usr/share/contrib/gcc -L/usr/local/lib -lgettextlib -O2 -o wcd
+
+
+
+
+simple:	wcd.c d2.o ed.o common.o suffixcluster.o
+	$(CC) -DNOLONGOPT -O3  -o wcd  wcd.c d2.o ed.o common.o suffixcluster.o
+
+
+
+
+ccsimple:	wcd.c d2.o ed.o common.o
+	cc -DNOLONGOPT -O3  -o wcd  wcd.c d2.o ed.o common.o
+
+
+
+reallysimple:	wcd.c d2.o ed.o
+	$(CC) -DNOLONGOPT -DNOINLINE -O2  -o wcd  wcd.c d2.o ed.o
+
+
+ccreallysimple:	wcd.c d2.o ed.o common.o
+	cc -DNOLONGOPT -DNOINLINE -O2  -o wcd  wcd.c d2.o ed.o common.o
+
+try:	wcd.c
+	$(CC) -O2 -I${INCLUDES} -L${LIBS} -o wcd wcd.c
+
+
+clean:
+	rm -f core.*
+	rm -f *~
+	rm -f wcd
+
+
+pdf:    ../doc/wcd.info
+	cd ../doc; pdftex wcd.texi; pdftex wcd.texi
+	cd ../doc; /bin/rm wcd.fn wcd.ky wcd.pg wcd.cp wcd.aux wcd.log wcd.tp wcd.toc wcd.vr
+
+docs:	wcd.info
+	/bin/rm -rf  html
+	makeinfo -o html --html wcd.texi
+
+wcd_distrib: 
+	cd ..; make pdf
+	scp ../src-wcd-c-0.2.*.tar.gz ftp.cs.wits.ac.za:/home/ftp/wits-cs/research/software
+	scp ../src-wcd-c-0.2.*.tar.gz fling.sanbi.ac.za:wcd_distrib
+	ssh fling.sanbi.ac.za chmod -R a+rX wcd_distrib
+
+copytobackup:
+	cp src-wcd-c-0.2.0.tar.gz /media/sda1
+
+
+debug:
+	$(CC) -g -lc -c common.c
+	$(CC) -g -lc -c d2.c
+	$(CC) -g -lc -c ed.c
+	gcc -lc -g -DSMALLMEM -o wcd  wcd.c d2.o common.o ed.o
+
+
