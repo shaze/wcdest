@@ -1612,7 +1612,11 @@ int main(int argc, char *argv[]) {
       if (prog_opts.show_perf)     show_performance(outf);
       MPI_Finalize();
       exit(0);
-    }   
+    }   else {
+      if (prog_opts.domerge || prog_opts.doadd) {
+	printf("\n\nWarning!\n\nWarning MPI not properly tested with merge and add options -- use pthreads!!\n\n");
+      }
+    }
 #else
   if (numprocs > 1) {
     printf("This version of wcd is not compiled with MPI\n");

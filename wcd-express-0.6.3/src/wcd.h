@@ -15,7 +15,7 @@ static char version[] = PACKAGE_VERSION;
 
 
 Copyright (C) Scott Hazelhurst     2003-2016
-              School of Com
+              School of Electrical and Information Engineering
               University of the Witwatersrand,
 	      Johannesburg
 	      Private Bag 3, 2050 Wits
