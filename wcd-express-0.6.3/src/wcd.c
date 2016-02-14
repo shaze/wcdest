@@ -6,7 +6,7 @@
 /* 	$Id: wcd.c,v 0.5 2009/04/02 15:02:43 scott Exp scott $	 */
 
 #ifndef lint
-static char vcid[] = "$Id: wcd.c,v 0.6.3 2011/10/01 10:24:02 scott Exp scott $";
+static char vcid[] = "$Id: wcd.c,v 0.6.4 2016/02/12 10:24:02 scott Exp scott $";
 #endif /* lint */
 
 
@@ -15,8 +15,8 @@ static char vcid[] = "$Id: wcd.c,v 0.6.3 2011/10/01 10:24:02 scott Exp scott $";
 
   wcd.c    does EST clustering
 
-  Copyright (C) Scott Hazelhurst     2003-2008
-  School of Computer Science, 
+  Copyright (C) Scott Hazelhurst     2003-2016
+  School of Electrical & Information Enigneering
   University of the Witwatersrand,
   Johannesburg
   Private Bag 3, 2050 Wits
@@ -33,7 +33,7 @@ static char vcid[] = "$Id: wcd.c,v 0.6.3 2011/10/01 10:24:02 scott Exp scott $";
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public Licence for more details.
 
-  http://code.google.com/p/wcdest
+  http://github.com/shaze
 
 
 */
@@ -275,8 +275,9 @@ void clone_link(WorkPtr work) {
 //------------ key clustering algorithm
 
 
-
+#ifndef NOINLINE
 inline
+#endif
 void check_heuristics(int i, int j, int limit, int * num_mat_pos, int * num_mat_rc ) {
   int k;
   int samp_pos, samp_rc;
@@ -359,7 +360,7 @@ void stats_complete_pairwise_cluster(WorkPtr work, int i, int * candidates, int 
       word_threshold = word_threshold_def-(window_len_def-window_len);
     }
     if (seqInfo[j].len<100) {
-      sample_thresh  = sample_thresh-(116-seqInfo[j].len)>>4;
+      sample_thresh  = sample_thresh-((116-seqInfo[j].len)>>4);
     }
 
     rootI = mini_find_parent(i);
@@ -429,7 +430,7 @@ void complete_pairwise_cluster(WorkPtr work, int i, int * candidates, int num_ca
       word_threshold = word_threshold_def-(window_len_def-window_len);
     }
     if (seqInfo[j].len<100) {
-      sample_thresh  = sample_thresh-(116-seqInfo[j].len)>>4;
+      sample_thresh  = sample_thresh-((116-seqInfo[j].len)>>4);
     }
 
 
@@ -506,7 +507,7 @@ void complete_klink_prep(FILE * outf, WorkPtr work, int i,
       word_threshold = word_threshold_def-(window_len_def-window_len);
     }
     if (seqInfo[j].len<100) {
-      sample_thresh  = sample_thresh-(116-seqInfo[j].len)>>4;
+      sample_thresh  = sample_thresh-((116-seqInfo[j].len)>>4);
     }
 
     if (!(IS_FLAG(FIX,i)&&IS_FLAG(FIX,j) )) { 
@@ -1185,18 +1186,22 @@ void chooseFun(char * dfunname) {
 
 
 
-int handleMerge(char * fname, int num_seqs) {
-  int i;
+int handleMerge(char * fname) {
+  int first_num, second_num, second_size;
 
   if (prog_opts.init_cluster) {
     printf("Cannot use init_cluster option with merge or add.\n");
     printf("Give clustering as file arguments.\n");
     assert(0);
   }
-  i = count_seqs(fname);
+  first_num=num_seqs;// Bad program design having num_seqs global--count_seqs
+  num_seqs=0; // needs num_seqs to be zero at this point otherwise it assumes
+              // -C option has been used - so this is a hack
+  second_num = count_seqs(fname, &second_size);
   if (prog_opts.consfname2) 
     process_constraints(prog_opts.consfname2,num_seqs);
-  num_seqs = num_seqs+i;
+  num_seqs = first_num+second_num;
+  data_size = data_size+second_size;
   return num_seqs;
 }
 
@@ -1625,10 +1630,25 @@ int main(int argc, char *argv[]) {
   // use that, else use the number of sequences in the file
   num_seqs = count_seqs(argv[optind], &data_size)+reindex_value;
 
+  numinfirst = global_i_end = num_seqs;
+  global_j_beg = 0;
+  // if merging, need to check the other file too
+  if (prog_opts.domerge || prog_opts.doadd ) {
+    global_j_beg = global_i_end;
+    num_seqs = handleMerge(argv[optind+2]);
+    if (prog_opts.doadd) global_i_end = num_seqs; 
+  }
+
   seq = (SeqPtr *) calloc(num_seqs,sizeof(SeqPtr));
   seqInfo     = (SeqInfoPtr) calloc(num_seqs,sizeof(SeqInfoStruct));
   tree= (UnionFindPtr) calloc(num_seqs,sizeof(UnionFindStruct));
   data= (SeqPtr)  calloc(data_size,sizeof(SeqElt));
+  initialise(work, prog_opts.edfile);
+  if (data == NULL) {
+    sprintf(chkfile,"Main data store (%d bytes)",data_size);
+    perror(chkfile);
+    exit(51);
+  }
   init_dummy_sequences();
 #ifndef AUXINFO
   seqID = (SeqIDPtr) calloc(num_seqs,sizeof(SeqIDStruct));
@@ -1637,21 +1657,7 @@ int main(int argc, char *argv[]) {
     perror("SeqStruct allocation");
     exit(50);
   }
-  numinfirst = global_i_end = num_seqs;
-  global_j_beg = 0;
-  // if merging, need to check the other file too
-  if (prog_opts.domerge || prog_opts.doadd ) {
-    global_j_beg = global_i_end;
-    num_seqs = handleMerge(argv[optind+2], num_seqs);
-    if (prog_opts.doadd) global_i_end = num_seqs; 
-  }
 
-  initialise(work, prog_opts.edfile);
-  if (data == NULL) {
-    sprintf(chkfile,"Main data store (%d bytes)",data_size);
-    perror(chkfile);
-    exit(51);
-  }
   for(i=0; i<num_seqs; i++) seqInfo[i].flag=0;
   // reopen sequence file for reading
   finp = fopen(argv[optind],"r");

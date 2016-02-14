@@ -14,13 +14,13 @@ static char version[] = PACKAGE_VERSION;
 /*
 
 
-Copyright (C) Scott Hazelhurst     2003, 2004
-              School of Computer Science, 
+Copyright (C) Scott Hazelhurst     2003-2016
+              School of Com
               University of the Witwatersrand,
 	      Johannesburg
 	      Private Bag 3, 2050 Wits
               South Africa
-              scott@cs.wits.ac.za
+              scott.hazelhurst@wits.ac.za
 
 
      This program is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@ Copyright (C) Scott Hazelhurst     2003, 2004
      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
      GNU General Public Licence for more details.
 
-      ftp://ftp.cs.wits.ac.za/pub/research/software/wcd_distrib.tar.gz
+     http://github.com/shaze
 
 
 
@@ -117,6 +117,13 @@ typedef struct ProgOptionsType  {
 #define GO_FLAG_ADJSYMM   3
 #define GO_FLAG_ADJ       4
 
+void do_pairwise_cluster(WorkPtr work);
+
 void complete_pairwise_cluster(WorkPtr work, int i, int * candidates, int num_cands);
+
+void complete_klink_prep(FILE * outf, WorkPtr work, int i, 
+			 int * candidates, int num_cands);
+
+
 #endif
 

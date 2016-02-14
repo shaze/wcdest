@@ -65,7 +65,7 @@ extern SeqPtr *seq;
 extern int offset;
 
 #ifndef NOINLINE
-//inline
+inline
 #endif
 void update_window_1(int * delta, wordElt * word1, 
                      int i, int *min_score, int *score) {

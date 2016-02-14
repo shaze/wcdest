@@ -1,10 +1,10 @@
 
-CC = gcc-4
+CC = gcc
 INCLUDES = /usr/include
 LIBS     = /usr/lib
 EXTRAFLAGS = 
 
-CFLAGS = -O2
+CFLAGS = -g -DNOINLINE
 
 
 AUXPROGS =  comp2ext.pl ext2comp.pl wcd.c combine.c
@@ -14,7 +14,18 @@ common:	 common.h common.c wcd.h
 	 $(CC) $(CFLAGS) -c common.c
 
 
+mpistuff:	 mpistuff.h common.h mpistuff.c
+	 $(CC) $(CFLAGS) -c mpistuff.c
+
+pthreadstuff:	 pthreadstuff.h common.h pthreadstuff.c
+	 $(CC) $(CFLAGS) -c pthreadstuff.c
+
+
 ed:	 ed.h common.h wcd.h
+	 $(CC) $(CFLAGS) -c ed.c
+
+
+auxcluster:	 auxcluster.h auxcluster.c common.h wcd.h
 	 $(CC) $(CFLAGS) -c ed.c
 
 d2:	 common.h d2.h wcd.h
@@ -27,8 +38,8 @@ info:
 	makeinfo ../doc/wcd.texi -o ../doc/wcd.info
 
 
-wcd:	wcd.c common.o d2.o ed.o suffixcluster.o wcd.c
-	$(CC) ${CFLAGS} -o $@  wcd.c common.o d2.o ed.o suffixcluster.c
+wcd:	wcd.c common.o d2.o ed.o suffixcluster.o wcd.c mpistuff.o pthreadstuff.o auxcluster.o
+	$(CC) ${CFLAGS} -o $@  wcd.c common.o mpistuff.o pthreadstuff.o d2.o ed.o suffixcluster.o auxcluster.o 
 
 wcd2:	wcd.c
 	$(CC) -I/usr/share/contrib/gcc -L/usr/local/lib -lgettextlib -O2 -o wcd
@@ -62,7 +73,7 @@ clean:
 	rm -f core.*
 	rm -f *~
 	rm -f wcd
-
+	
 
 pdf:    ../doc/wcd.info
 	cd ../doc; pdftex wcd.texi; pdftex wcd.texi
@@ -89,3 +100,8 @@ debug:
 	gcc -lc -g -DSMALLMEM -o wcd  wcd.c d2.o common.o ed.o
 
 
+testsetup:
+	cp ~/OtherData/pc* .
+ 
+testclean:	
+	rm ~/OtherData/pc*

@@ -2,6 +2,8 @@
 
 #include "common.h"
 #include "wcd.h"
+#include "pthread.h"
+#include "mpistuff.h"
 
 extern int num_threads;
 extern int global_i_beg, global_i_end, global_j_beg, global_j_end;
@@ -35,7 +37,7 @@ int parallel_get_task(WorkPtr work) {
 
   //DBg  printf("T%d i_cur=%d, d=%d\n",work->thread_num,i_cur,d);
   pthread_mutex_lock(&get_task_mutex);
-  if (i_cur >= d)   /* local tasks complete */
+  if (i_cur >= d) {  /* local tasks complete */
     if (mpi_get_task(work)) {// get remote work
       //mpi_get_task sets the global_X_Y variables
       i_cur =0;
@@ -44,7 +46,7 @@ int parallel_get_task(WorkPtr work) {
       i_cur=MAX_SEQ_LEN;
       return 0;
     }
-
+  }
   range = global_i_end - global_i_beg;
   size = range / d;
   extra = range % d;

@@ -248,13 +248,12 @@ void debug_show_clusters(WorkPtr work, char * fname);
 
 int ind(int i);
 
-void  mirror_sequences(char *, char *);
+void  mirror_sequences(char *);
 
 int compare_int(const void *a, const void *b);
 
 void pseq(int i);
 void pseqi(int i);
-void mirror_sequences(char *infname, char *outfname);
 
 
 #endif

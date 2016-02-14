@@ -219,6 +219,9 @@ void num_matches(WorkPtr work, int s1, int s2, int *posmat, int *rcmat);
 
 void stat_num_matches(WorkPtr work, int s1, int s2, int *posmat, int *rcmat);
 
+
+int count_seqs(char * fname, int *datasize);
+
 void read_sequences(FILE *finp, int c1, int c2);
 
 

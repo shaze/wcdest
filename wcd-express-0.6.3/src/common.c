@@ -45,6 +45,8 @@ extern pthread_mutex_t write_union_mutex, find_parent_mutex;
 int  tr[4];  // see note below -- for translating input
 SeqElt *rc, *rc_big; // table for RC
 
+
+
 //----------  parameters for clustering
 int alpha=3;
 int beta=45;
@@ -740,7 +742,7 @@ inline
 void chomp(char * line) {
   int n;
   n=strlen(line)-1;
-  if (line[n]='\n')
+  if (line[n]=='\n')
     line[n]=(char) 0;
 }
 
@@ -782,7 +784,7 @@ void read_sequences(FILE *finp, int c1, int c2) {
     strcpy(clone,"");
     if (m==0) sprintf(id_seq,"%d",i);
     else {
-      while (m=fscanf(finp,"%[\n]", tmp)==0) {
+      while (fscanf(finp,"%[\n]", tmp)==0) {
 	m=fscanf(finp,"%[\t ]",dummy);
 	m=fscanf(finp,"%[]\r0-9@#$^&*()_=+;:'\"|\%,<.>/?`~A-Za-z{}[-]",dummy);
 	if (strcmp(dummy,"clone")==0) {
