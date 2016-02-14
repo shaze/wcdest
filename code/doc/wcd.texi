@@ -18,7 +18,7 @@
 
 
 Copyright @copyright{} @value{YEAR}, University of the Witwatersrand, Johannesburg     
-
+@end iftex
 
 @end titlepage
      
